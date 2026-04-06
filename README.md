@@ -7,7 +7,7 @@ Python bindings for AAC/M4A gain adjustment, powered by the [mp3rgain](https://c
 Install from the GitHub Pages package index:
 
 ```bash
-pip install m4againpy --extra-index-url https://<user>.github.io/m4againpy/simple/
+pip install m4againpy --extra-index-url https://andrewtheguy.github.io/m4againpy/simple/
 ```
 
 ## Usage
