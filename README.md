@@ -2,6 +2,8 @@
 
 Python bindings for AAC/M4A gain adjustment, powered by the [mp3rgain](https://crates.io/crates/mp3rgain) Rust crate via PyO3.
 
+> **Note:** Only the M4A/AAC gain functionality is implemented so far. MP3 gain bindings from the upstream crate are not yet exposed.
+
 ## Installation
 
 Install from the GitHub Pages package index:
