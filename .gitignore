@@ -1,6 +1,10 @@
 /target
+/native-helper/target
 __pycache__/
 *.pyc
+*.so
+*.pyd
+*.dylib
 .DS_Store
 *.swp
 *.swo
@@ -8,3 +12,7 @@ __pycache__/
 .vscode/
 .idea/
 .claude/
+.venv/
+build/
+dist/
+*.egg-info/

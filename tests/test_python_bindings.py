@@ -1,62 +1,14 @@
-import importlib.util
-import os
-import platform
 import shutil
-import sys
 import tempfile
 import unittest
 from pathlib import Path
+
+import mp3rgainpy
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 TESTDATA_DIR = PROJECT_ROOT / "testdata"
 TEST_M4A = TESTDATA_DIR / "test.m4a"
 TEST_MP3 = TESTDATA_DIR / "test.mp3"
-
-
-def _find_module():
-    env = os.environ.get("MP3RGAINPY_PYTHON_MODULE")
-    if env:
-        return Path(env)
-
-    system = platform.system()
-    if system == "Linux":
-        extensions = [".so"]
-        prefixes = ["libmp3rgainpy", "mp3rgainpy"]
-    elif system == "Darwin":
-        extensions = [".dylib", ".so"]
-        prefixes = ["libmp3rgainpy", "mp3rgainpy"]
-    elif system == "Windows":
-        extensions = [".pyd", ".dll"]
-        prefixes = ["mp3rgainpy"]
-    else:
-        extensions = [".so"]
-        prefixes = ["libmp3rgainpy", "mp3rgainpy"]
-
-    for build_type in ["debug", "release"]:
-        for prefix in prefixes:
-            for ext in extensions:
-                candidate = PROJECT_ROOT / "target" / build_type / f"{prefix}{ext}"
-                if candidate.exists():
-                    return candidate
-
-    return None
-
-
-def _load_module():
-    path = _find_module()
-    if path is None:
-        raise RuntimeError(
-            "Could not find mp3rgainpy shared library. "
-            "Run `cargo build --features python --lib` first, "
-            "or set MP3RGAINPY_PYTHON_MODULE to the path."
-        )
-    spec = importlib.util.spec_from_file_location("mp3rgainpy", str(path))
-    mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)
-    return mod
-
-
-mp3rgainpy = _load_module()
 
 
 class AacBindingsTest(unittest.TestCase):

@@ -75,3 +75,29 @@ Each gain step corresponds to **1.5 dB** (`mp3rgainpy.GAIN_STEP_DB`). Positive v
 | `mp3_apply_gain_with_undo(path, steps)` | Apply gain and record APEv2 undo tag |
 | `mp3_undo_gain(path)` | Revert gain using the APEv2 undo tag |
 | `mp3_analyze(path)` | Analyze frame gain stats (returns `Mp3Analysis`) |
+
+## Development
+
+The Rust crate lives in `native-helper/`; the Python package lives in
+`mp3rgainpy/`. Maturin builds the native extension as
+`mp3rgainpy/_native.<abi>.so` directly in the source tree, so iterating on
+the Rust code only requires rebuilding the `.so` — no wheel reinstall.
+
+```bash
+# One-time setup
+python -m venv .venv
+source .venv/bin/activate
+pip install --upgrade pip maturin
+
+# After each Rust change (rebuilds _native.so in place, skips wheel install)
+maturin develop --skip-install --manifest-path native-helper/Cargo.toml
+
+# Run tests
+python -m unittest tests.test_python_bindings
+
+# Rust-only tests
+cargo test --manifest-path native-helper/Cargo.toml
+```
+
+Version bumps happen in `pyproject.toml`; `native-helper/Cargo.toml` stays
+pinned at `0.0.0` because the crate is never published independently.

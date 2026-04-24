@@ -11,4 +11,7 @@ requires-python = ">=3.12"
 dependencies = []
 
 [tool.maturin]
+manifest-path = "native-helper/Cargo.toml"
 features = ["python"]
+module-name = "mp3rgainpy._native"
+python-packages = ["mp3rgainpy"]

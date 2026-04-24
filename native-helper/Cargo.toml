@@ -1,10 +1,10 @@
 [package]
-name = "mp3rgainpy"
+name = "native-helper"
 version = "0.0.0"
 edition = "2021"
 
 [lib]
-name = "mp3rgainpy"
+name = "native_helper"
 crate-type = ["rlib", "cdylib"]
 
 [features]

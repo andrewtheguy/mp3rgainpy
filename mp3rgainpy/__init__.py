@@ -1,0 +1,33 @@
+from ._native import (
+    GAIN_STEP_DB,
+    AacGainAnalysis,
+    AacGainLocation,
+    Mp3Analysis,
+    aac_analyze,
+    aac_apply_gain,
+    aac_apply_gain_with_undo,
+    aac_undo_gain,
+    is_aac_file,
+    is_mp4_file,
+    mp3_analyze,
+    mp3_apply_gain,
+    mp3_apply_gain_with_undo,
+    mp3_undo_gain,
+)
+
+__all__ = [
+    "GAIN_STEP_DB",
+    "AacGainAnalysis",
+    "AacGainLocation",
+    "Mp3Analysis",
+    "aac_analyze",
+    "aac_apply_gain",
+    "aac_apply_gain_with_undo",
+    "aac_undo_gain",
+    "is_aac_file",
+    "is_mp4_file",
+    "mp3_analyze",
+    "mp3_apply_gain",
+    "mp3_apply_gain_with_undo",
+    "mp3_undo_gain",
+]
