@@ -1,6 +1,6 @@
 [package]
 name = "m4again"
-version = "0.0.1"
+version = "0.0.2"
 edition = "2021"
 
 [lib]
@@ -12,5 +12,5 @@ default = []
 python = ["dep:pyo3", "pyo3/extension-module"]
 
 [dependencies]
-mp3rgain = { version = "=2.0.4", default-features = false, features = ["aac"] }
+mp3rgain = { version = "=2.2.3", default-features = false, features = ["aac"] }
 pyo3 = { version = "0.27.2", optional = true, features = ["abi3-py39"] }
