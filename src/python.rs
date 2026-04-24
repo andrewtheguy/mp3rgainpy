@@ -196,8 +196,8 @@ fn is_aac_file_py(file_path: &str) -> bool {
 }
 
 #[pymodule]
-#[pyo3(name = "m4again")]
-fn m4again_module(module: &Bound<'_, PyModule>) -> PyResult<()> {
+#[pyo3(name = "mp3rgainpy")]
+fn mp3rgainpy_module(module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add(
         "__all__",
         vec![

@@ -3,9 +3,9 @@ requires = ["maturin>=1.9.4,<2.0"]
 build-backend = "maturin"
 
 [project]
-name = "m4againpy"
+name = "mp3rgainpy"
 version = "0.0.1"
-description = "PyO3 bindings for AAC/M4A gain adjustment"
+description = "PyO3 bindings for MP3 and AAC/M4A gain adjustment"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = []

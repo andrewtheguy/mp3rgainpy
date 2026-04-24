@@ -14,23 +14,23 @@ TEST_MP3 = TESTDATA_DIR / "test.mp3"
 
 
 def _find_module():
-    env = os.environ.get("M4AGAIN_PYTHON_MODULE")
+    env = os.environ.get("MP3RGAINPY_PYTHON_MODULE")
     if env:
         return Path(env)
 
     system = platform.system()
     if system == "Linux":
         extensions = [".so"]
-        prefixes = ["libm4again", "m4again"]
+        prefixes = ["libmp3rgainpy", "mp3rgainpy"]
     elif system == "Darwin":
         extensions = [".dylib", ".so"]
-        prefixes = ["libm4again", "m4again"]
+        prefixes = ["libmp3rgainpy", "mp3rgainpy"]
     elif system == "Windows":
         extensions = [".pyd", ".dll"]
-        prefixes = ["m4again"]
+        prefixes = ["mp3rgainpy"]
     else:
         extensions = [".so"]
-        prefixes = ["libm4again", "m4again"]
+        prefixes = ["libmp3rgainpy", "mp3rgainpy"]
 
     for build_type in ["debug", "release"]:
         for prefix in prefixes:
@@ -46,34 +46,34 @@ def _load_module():
     path = _find_module()
     if path is None:
         raise RuntimeError(
-            "Could not find m4again shared library. "
+            "Could not find mp3rgainpy shared library. "
             "Run `cargo build --features python --lib` first, "
-            "or set M4AGAIN_PYTHON_MODULE to the path."
+            "or set MP3RGAINPY_PYTHON_MODULE to the path."
         )
-    spec = importlib.util.spec_from_file_location("m4again", str(path))
+    spec = importlib.util.spec_from_file_location("mp3rgainpy", str(path))
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     return mod
 
 
-m4again = _load_module()
+mp3rgainpy = _load_module()
 
 
 class AacBindingsTest(unittest.TestCase):
     def test_gain_step_db_constant(self):
-        self.assertEqual(m4again.GAIN_STEP_DB, 1.5)
+        self.assertEqual(mp3rgainpy.GAIN_STEP_DB, 1.5)
 
     def test_is_mp4_file(self):
-        self.assertTrue(m4again.is_mp4_file(str(TEST_M4A)))
+        self.assertTrue(mp3rgainpy.is_mp4_file(str(TEST_M4A)))
 
     def test_is_aac_file(self):
-        self.assertTrue(m4again.is_aac_file(str(TEST_M4A)))
+        self.assertTrue(mp3rgainpy.is_aac_file(str(TEST_M4A)))
 
     def test_is_mp4_file_negative(self):
-        self.assertFalse(m4again.is_mp4_file(str(PROJECT_ROOT / ".gitignore")))
+        self.assertFalse(mp3rgainpy.is_mp4_file(str(PROJECT_ROOT / ".gitignore")))
 
     def test_aac_analyze_returns_gain_analysis(self):
-        analysis = m4again.aac_analyze(str(TEST_M4A))
+        analysis = mp3rgainpy.aac_analyze(str(TEST_M4A))
         self.assertIsInstance(analysis.sample_count, int)
         self.assertIsInstance(analysis.channel_count, int)
         self.assertIsInstance(analysis.min_gain, int)
@@ -85,7 +85,7 @@ class AacBindingsTest(unittest.TestCase):
         self.assertEqual(analysis.sample_rate, 44100)
 
     def test_aac_analyze_gain_locations_have_attributes(self):
-        analysis = m4again.aac_analyze(str(TEST_M4A))
+        analysis = mp3rgainpy.aac_analyze(str(TEST_M4A))
         locations = analysis.gain_locations
         self.assertGreater(len(locations), 0)
         loc = locations[0]
@@ -101,25 +101,25 @@ class AacBindingsTest(unittest.TestCase):
             tmp_m4a = Path(tmpdir) / "test.m4a"
             shutil.copy2(TEST_M4A, tmp_m4a)
 
-            original = m4again.aac_analyze(str(tmp_m4a))
+            original = mp3rgainpy.aac_analyze(str(tmp_m4a))
             original_gains = [
                 loc.original_gain for loc in original.gain_locations
             ]
 
-            modified_count = m4again.aac_apply_gain_with_undo(str(tmp_m4a), 2)
+            modified_count = mp3rgainpy.aac_apply_gain_with_undo(str(tmp_m4a), 2)
             self.assertGreater(modified_count, 0)
 
-            after_apply = m4again.aac_analyze(str(tmp_m4a))
+            after_apply = mp3rgainpy.aac_analyze(str(tmp_m4a))
             after_gains = [
                 loc.original_gain for loc in after_apply.gain_locations
             ]
             for orig, after in zip(original_gains, after_gains):
                 self.assertEqual(after, orig + 2)
 
-            undo_count = m4again.aac_undo_gain(str(tmp_m4a))
+            undo_count = mp3rgainpy.aac_undo_gain(str(tmp_m4a))
             self.assertGreater(undo_count, 0)
 
-            restored = m4again.aac_analyze(str(tmp_m4a))
+            restored = mp3rgainpy.aac_analyze(str(tmp_m4a))
             restored_gains = [
                 loc.original_gain for loc in restored.gain_locations
             ]
@@ -129,21 +129,21 @@ class AacBindingsTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmpdir:
             tmp_m4a = Path(tmpdir) / "test.m4a"
             shutil.copy2(TEST_M4A, tmp_m4a)
-            count = m4again.aac_apply_gain(str(tmp_m4a), 0)
+            count = mp3rgainpy.aac_apply_gain(str(tmp_m4a), 0)
             self.assertEqual(count, 0)
 
     def test_aac_analyze_nonexistent_file_raises(self):
         with self.assertRaises(RuntimeError):
-            m4again.aac_analyze("/nonexistent/path/file.m4a")
+            mp3rgainpy.aac_analyze("/nonexistent/path/file.m4a")
 
     def test_aac_analyze_non_m4a_file_raises(self):
         with self.assertRaises(RuntimeError):
-            m4again.aac_analyze(str(PROJECT_ROOT / ".gitignore"))
+            mp3rgainpy.aac_analyze(str(PROJECT_ROOT / ".gitignore"))
 
 
 class Mp3BindingsTest(unittest.TestCase):
     def test_mp3_analyze_returns_analysis(self):
-        analysis = m4again.mp3_analyze(str(TEST_MP3))
+        analysis = mp3rgainpy.mp3_analyze(str(TEST_MP3))
         self.assertIsInstance(analysis.frame_count, int)
         self.assertIsInstance(analysis.mpeg_version, str)
         self.assertIsInstance(analysis.channel_mode, str)
@@ -162,7 +162,7 @@ class Mp3BindingsTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmpdir:
             tmp_mp3 = Path(tmpdir) / "test.mp3"
             shutil.copy2(TEST_MP3, tmp_mp3)
-            count = m4again.mp3_apply_gain(str(tmp_mp3), 0)
+            count = mp3rgainpy.mp3_apply_gain(str(tmp_mp3), 0)
             self.assertEqual(count, 0)
 
     def test_mp3_apply_gain_and_undo(self):
@@ -170,26 +170,26 @@ class Mp3BindingsTest(unittest.TestCase):
             tmp_mp3 = Path(tmpdir) / "test.mp3"
             shutil.copy2(TEST_MP3, tmp_mp3)
 
-            original = m4again.mp3_analyze(str(tmp_mp3))
+            original = mp3rgainpy.mp3_analyze(str(tmp_mp3))
             orig_min, orig_max = original.min_gain, original.max_gain
 
-            modified = m4again.mp3_apply_gain_with_undo(str(tmp_mp3), 2)
+            modified = mp3rgainpy.mp3_apply_gain_with_undo(str(tmp_mp3), 2)
             self.assertGreater(modified, 0)
 
-            after = m4again.mp3_analyze(str(tmp_mp3))
+            after = mp3rgainpy.mp3_analyze(str(tmp_mp3))
             self.assertEqual(after.min_gain, orig_min + 2)
             self.assertEqual(after.max_gain, orig_max + 2)
 
-            undone = m4again.mp3_undo_gain(str(tmp_mp3))
+            undone = mp3rgainpy.mp3_undo_gain(str(tmp_mp3))
             self.assertGreater(undone, 0)
 
-            restored = m4again.mp3_analyze(str(tmp_mp3))
+            restored = mp3rgainpy.mp3_analyze(str(tmp_mp3))
             self.assertEqual(restored.min_gain, orig_min)
             self.assertEqual(restored.max_gain, orig_max)
 
     def test_mp3_analyze_non_mp3_file_raises(self):
         with self.assertRaises(RuntimeError):
-            m4again.mp3_analyze(str(PROJECT_ROOT / ".gitignore"))
+            mp3rgainpy.mp3_analyze(str(PROJECT_ROOT / ".gitignore"))
 
 
 if __name__ == "__main__":
