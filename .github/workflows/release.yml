@@ -152,7 +152,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
         run: |
-          mkdir -p _pages/simple/m4againpy
+          mkdir -p _pages/simple/mp3rgainpy
 
           {
             echo '<!DOCTYPE html><html><body>'
@@ -162,11 +162,11 @@ jobs:
               done
             done
             echo '</body></html>'
-          } > _pages/simple/m4againpy/index.html
+          } > _pages/simple/mp3rgainpy/index.html
 
           cat > _pages/simple/index.html <<'HTML'
           <!DOCTYPE html><html><body>
-          <a href="m4againpy/">m4againpy</a>
+          <a href="mp3rgainpy/">mp3rgainpy</a>
           </body></html>
           HTML
 
